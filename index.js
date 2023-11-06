@@ -13,7 +13,6 @@ app.get('/',(req,res)=>{
 })
 
 app.use('/api/auth', require('./routes/auth'))
-app.use('/api/order', require('./routes/order'))
 
 app.listen(port,()=>{
     console.log(`Trendy Tone the application is started succesfully on ${port}`);
