@@ -15,6 +15,31 @@ const UserSchema = new Schema({
         type:String,
         required:false
     },
+    maxsalary:{
+        type:String,
+        required:false
+    },
+    minsalary:{
+        type:String,
+        required:false
+    },
+    maxexpense:{
+        type:String,
+        required:false
+    },
+    minexpense:{
+        type:String,
+        required:false
+    },
+    minexpense:{
+        type:String,
+        required:false
+    },
+    pic: {
+        type: String,
+        default:
+          "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+      },
     date:{
         type:Date,
         default: Date.now

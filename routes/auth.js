@@ -17,44 +17,7 @@ let otp;
 let email1;
 
 
-router.post('/createuser',[
-    body('name','Enter a valid name').isLength({ min: 3 }),
-    body('email','Enter a valid email').isEmail(),
-    body('password','Enter a valid password').isLength({ min: 5 })
-],
-async(req, res) => {
-    let success=false;
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({success, errors: errors.array() });
-    }
-    try{
-    let user=await User.findOne({email: req.body.email});
-    if(user){
-        return res.status(400).json({success,error:"sorry a user with this email already exist"})
-    }
-    const salt = await bcrypt.genSalt(10);
-    const secPass = await bcrypt.hash(req.body.password,salt);
 
-    user = await User.create({
-        name: req.body.name,
-        email:req.body.email,
-        password: secPass,
-      });
-      const data ={
-        user:{
-            id:user.id
-        }
-      }
-       const authtoken = jwt.sign(data, JWT_SECRET);
-       success=true;
-       res.json({success,authtoken});
-    }catch (error){
-        console.error(error.message);
-        res.status(500).send("some error occured");
-    }
-}
-)
 
 
 //second route for login
@@ -87,9 +50,14 @@ router.post('/login',[
             }
           }
           const id=user.id;
+          const name=user.name;
+          const pic=user.pic;
+          const maxexpense=user.maxexpense;
+          const minexpense=user.minexpense;
+          const maxsalary=user.maxsalary;
           const authtoken = jwt.sign(data, JWT_SECRET);
           success=true;
-       res.json({success,authtoken,id});
+       res.json({success,authtoken,id,name,pic,maxexpense,minexpense,maxsalary});
     } catch (error){
         console.error(error);
         res.status(500).send("some error occured");
@@ -191,7 +159,13 @@ router.post('/sendotp',[
 
     router.post('/createuser',[
       body('name','Enter a valid name').isLength({ min: 3 }),
-      body('password','Enter a valid password').isLength({ min: 5 })
+      body('id','Enter a valid id'),
+      body('password','Enter a valid password').isLength({ min: 5 }),
+      body('pic','Enter a valid url'),
+      body('maxexpense','Enter a valid maxexpense'),
+      body('minexpense','Enter a valid minexpense'),
+      body('maxsalary','Enter a valid maxsalary'),
+      body('minsalary','Enter a valid minsalary')
   ],
   async(req, res) => {
       let success=false;
@@ -200,27 +174,19 @@ router.post('/sendotp',[
         return res.status(400).json({success, errors: errors.array() });
       }
       try{
-      let user=await User.findOne({email: email1});
-      if(user){
-          return res.status(400).json({success,error:"sorry a user with this email already exist"})
-      }
-      const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(req.body.password,salt);
-  
-      user = await User.create({
-          name: req.body.name,
-          email:email1,
-          password: secPass,
-        });
-        const data ={
-          user:{
-              id:user.id,
-              email:user.email
-          }
-        }
-         const authtoken = jwt.sign(data, JWT_SECRET);
+        await User.findByIdAndUpdate(req.body.id,{
+        name: req.body.name,
+        password: secPass,
+        maxexpense:req.body.maxexpense,
+        minexpense:req.body.minexpense,
+        maxsalary:req.body.maxsalary,
+        minsalary:req.body.minsalary
+      });
+    
          success=true;
-         res.json({success,authtoken});
+         res.json({success});
       }
       catch (error){
         console.error(error.message);
