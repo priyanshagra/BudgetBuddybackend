@@ -1,4 +1,4 @@
-const ExpenseSchema = require ("../models/ExpenseModel");
+const ExpenseSchema = require ("./models/ExpenseModel");
 
 exports.addExpense = async (req, res) => {
   const { title, amount, type, category, description, date } = req.body;
