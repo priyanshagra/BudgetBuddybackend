@@ -60,7 +60,7 @@ router.post('/login',[
        res.json({success,authtoken,id,name,pic,maxexpense,minexpense,maxsalary});
     } catch (error){
         console.error(error);
-        res.status(500).send("some error occured");
+        res.json({success})
     }
 
 })
@@ -179,6 +179,7 @@ router.post('/sendotp',[
         await User.findByIdAndUpdate(req.body.id,{
         name: req.body.name,
         password: secPass,
+        pic:req.body.pic,
         maxexpense:req.body.maxexpense,
         minexpense:req.body.minexpense,
         maxsalary:req.body.maxsalary,
@@ -190,7 +191,7 @@ router.post('/sendotp',[
       }
       catch (error){
         console.error(error.message);
-        res.status(500).send("some error occured");
+        res.json({success});
       }
   }
   )
@@ -203,6 +204,7 @@ router.post('/sendotp',[
     ],
     async (req, res) => {
       let success = false;
+      let success1=true;
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({ success, errors: errors.array() });
@@ -213,6 +215,7 @@ router.post('/sendotp',[
         let user = await User.findOne({ email });
   
         if (!user) {
+            success1=false
           // User doesn't exist, create a new entry
           user = await User.create({
             name: req.body.name,
@@ -227,12 +230,19 @@ router.post('/sendotp',[
         };
   
         const id = user.id;
+        const name= user.name;
+        const pic=user.pic;
+        const maxexpense=user.maxexpense;
+        const minexpense=user.minexpense;
+        const maxsalary=user.maxsalary;
+        const minsalary=user.minsalary;
         const authtoken = jwt.sign(data, JWT_SECRET);
         success = true;
-        res.json({ success, authtoken, id });
+        console.log(success1)
+        res.json({ success, authtoken, id ,success1,name,pic,maxexpense,minexpense,maxsalary,minsalary});
       } catch (error) {
         console.error(error.message);
-        res.status(500).send('Some error occurred');
+        res.json({success});
       }
     }
   );
@@ -253,10 +263,13 @@ router.post('/sendotp',[
       try {
         const email = req.body.email; // Correct the variable name to 'email'
 
-  
+        let user = await User.findOne({ email });
         
           // User doesn't exist, create a new entry
-         let user = await User.create({
+
+        if(!user)
+        {
+             let user = await User.create({
             email: req.body.email,
           })
         
@@ -271,9 +284,15 @@ router.post('/sendotp',[
         const authtoken = jwt.sign(data, JWT_SECRET);
         success = true;
         res.json({ success, authtoken, id });
+        }
+        else
+        {
+            res.json({success});
+        }  
+        
       } catch (error) {
         console.error(error.message);
-        res.status(500).send('Some error occurred');
+        res.json({success});
       }
     }
   );

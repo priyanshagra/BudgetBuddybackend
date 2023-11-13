@@ -12,7 +12,8 @@ app.get('/',(req,res)=>{
     res.send("hello world");  
 })
 
-app.use('/api/auth', require('./routes/auth'))
+app.use('/api/auth', require('./routes/auth')),
+app.use('/api/stocks', require('./routes/stock'))
 
 app.listen(port,()=>{
     console.log(`Trendy Tone the application is started succesfully on ${port}`);
