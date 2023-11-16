@@ -35,6 +35,10 @@ const UserSchema = new Schema({
         type:String,
         required:false
     },
+    currency:{
+        type:String,
+        required:false
+    },
     pic: {
         type: String,
         default:
