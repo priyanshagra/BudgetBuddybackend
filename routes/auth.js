@@ -5,9 +5,9 @@ const { body, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "Priyanshisagoodb$oy";
-const fetchuser = require("../middleware/fetchuser");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const asyncHandler = require("express-async-handler");
 
 function generateOTP() {
   const otp = crypto.randomInt(1000000);
@@ -84,18 +84,7 @@ router.post(
   }
 );
 
-//third route for user details
 
-router.get("/getuser", fetchuser, async (req, res) => {
-  try {
-    userId = req.user.id;
-    const user = await User.findById(userId).select("-password");
-    res.send(user);
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).send("some error occured");
-  }
-});
 
 //fourth route for sending otp
 router.post(
@@ -320,5 +309,21 @@ router.post(
     }
   }
 );
+
+const allUsers = asyncHandler(async (req, res) => {
+    const keyword = req.query.search
+      ? {
+          $or: [
+            { name: { $regex: req.query.search, $options: "i" } },
+            { email: { $regex: req.query.search, $options: "i" } },
+          ],
+        }
+      : {};
+  
+    const users = await User.find(keyword).find({ _id: { $ne:req.header('auth-token') } });
+    res.send(users);
+  });
+
+router.route("/suser/").get(allUsers);
 
 module.exports = router;

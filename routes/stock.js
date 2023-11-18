@@ -3,7 +3,6 @@ const router = express.Router();
 const Stock = require('../models/Stocks');
 const { body, validationResult } = require('express-validator');
 const nodemailer=require('nodemailer');
-const fetchuser=require("../middleware/fetchuser");
 
 
 router.get('/fetchallstocks',async(req,res)=>{
