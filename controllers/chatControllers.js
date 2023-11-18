@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Chat = require("../models/chatModel");
-const User = require("../models/userModel");
+const User = require("../models/User");
 
 //@description     Create or fetch One to One Chat
 //@route           POST /api/chat/
@@ -8,33 +8,11 @@ const User = require("../models/userModel");
 const accessChat = asyncHandler(async (req, res) => {
   const { userId } = req.body;
 
-  if (!userId) {
-    console.log("UserId param not sent with request");
-    return res.sendStatus(400);
-  }
-
-  var isChat = await Chat.find({
-    isGroupChat: false,
-    $and: [
-      { users: { $elemMatch: { $eq: req.user._id } } },
-      { users: { $elemMatch: { $eq: userId } } },
-    ],
-  })
-    .populate("users", "-password")
-    .populate("latestMessage");
-
-  isChat = await User.populate(isChat, {
-    path: "latestMessage.sender",
-    select: "name pic email",
-  });
-
-  if (isChat.length > 0) {
-    res.send(isChat[0]);
-  } else {
+  
     var chatData = {
       chatName: "sender",
       isGroupChat: false,
-      users: [req.user._id, userId],
+      users: [req.header('auth-token'), userId],
     };
 
     try {
@@ -48,7 +26,6 @@ const accessChat = asyncHandler(async (req, res) => {
       res.status(400);
       throw new Error(error.message);
     }
-  }
 });
 
 //@description     Fetch all chats for a user
@@ -56,7 +33,7 @@ const accessChat = asyncHandler(async (req, res) => {
 //@access          Protected
 const fetchChats = asyncHandler(async (req, res) => {
   try {
-    Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
+    Chat.find({ users: { $elemMatch: { $eq:req.header('auth-token')} } })
       .populate("users", "-password")
       .populate("groupAdmin", "-password")
       .populate("latestMessage")
@@ -90,14 +67,14 @@ const createGroupChat = asyncHandler(async (req, res) => {
       .send("More than 2 users are required to form a group chat");
   }
 
-  users.push(req.user);
+  users.push(req.header('auth-token'));
 
   try {
     const groupChat = await Chat.create({
       chatName: req.body.name,
       users: users,
       isGroupChat: true,
-      groupAdmin: req.user,
+      groupAdmin: req.header('auth-token'),
     });
 
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
