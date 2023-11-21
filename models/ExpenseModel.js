@@ -7,6 +7,11 @@ const ExpenseSchema = new mongoose.Schema({
         trim: true,
         maxLength: 50
     },
+    maker:
+    {
+        type:mongoose.Schema.Types.ObjectId,
+        required: true
+    },
     amount: {
         type: Number,
         required: true,
@@ -15,7 +20,7 @@ const ExpenseSchema = new mongoose.Schema({
     },
     type: {
         type:String,
-        deault: "expense"
+        default: "expense",
     },
     date: {
         type: Date,

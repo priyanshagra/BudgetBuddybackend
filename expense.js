@@ -1,11 +1,12 @@
 const ExpenseSchema = require ("./models/ExpenseModel");
 
 exports.addExpense = async (req, res) => {
-  const { title, amount, type, category, description, date } = req.body;
+  const { title, amount,maker, type, category, description, date } = req.body;
 
   const expense = ExpenseSchema({
     title,
     amount,
+    maker,
     type,
     category,
     description,
@@ -14,14 +15,6 @@ exports.addExpense = async (req, res) => {
 
 
   try {
-    if(!title || !category || !description || !date)
-    {
-      return res.status(400).json({message: 'All fields are required'})
-    }
-  if(amount<=0 || !amount === 'number')
-    {
-      return res.status(400).json({message: 'Amount must be positive'})
-    }
     await expense.save()
     res.status(200).json({message: 'Expense is saved'})
   } catch (error) {
@@ -31,8 +24,9 @@ exports.addExpense = async (req, res) => {
 }
 
 exports.getExpense = async (req, res) => {
+    const maker=req.header("auth-token");
   try {
-    const expense = await ExpenseSchema.find().sort({createdAt: -1})
+    const expense = await ExpenseSchema.find({maker}).sort({createdAt: -1})
     res.status(200).json({expense})
   } catch (error) {
     res.error(500).json({message: "Server Error"})

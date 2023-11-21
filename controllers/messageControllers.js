@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Message = require("../models/messageModel");
-const User = require("../models/userModel");
+const User = require("../models/User");
 const Chat = require("../models/chatModel");
 
 //@description     Get all Messages
@@ -30,7 +30,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   var newMessage = {
-    sender: req.user._id,
+    sender: req.header("auth-token"),
     content: content,
     chat: chatId,
   };
@@ -38,12 +38,13 @@ const sendMessage = asyncHandler(async (req, res) => {
   try {
     var message = await Message.create(newMessage);
 
-    message = await message.populate("sender", "name pic").execPopulate();
-    message = await message.populate("chat").execPopulate();
+    message = await message.populate("sender", "name pic");
+    message = await message.populate("chat");
     message = await User.populate(message, {
       path: "chat.users",
       select: "name pic email",
     });
+
 
     await Chat.findByIdAndUpdate(req.body.chatId, { latestMessage: message });
 
