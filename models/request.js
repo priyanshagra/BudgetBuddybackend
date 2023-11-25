@@ -6,6 +6,7 @@ const requestSchema = mongoose.Schema(
     paidfor: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
     chatid:{type:mongoose.Schema.Types.ObjectId, ref:"Chat"},
     money: { type:Number},
+    currency: { type:String },
   },
   { timestamps: true }
 );

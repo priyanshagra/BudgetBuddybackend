@@ -1,21 +1,26 @@
 const IncomeSchema = require ("./models/IncomeModel");
 
 exports.addIncome = async (req, res) => {
-  const { title, amount,maker,  category, description, date } = req.body;
+  const { title, amount,maker,  category, description, date , currency } = req.body;
   const income = IncomeSchema({
     title,
     amount,
     maker,
     category,
     description,
-    date
+    date,
+    currency
   })
-
+  if(amount<=0)
+  {
+    res.status(500).json({message: "Amount Should be positive"});
+  }
 
   try {
     await income.save()
     res.status(200).json({success:true})
   } catch (error) {
+    console.log(error);
     res.status(500).json({message: "Server Error"})
   }
 

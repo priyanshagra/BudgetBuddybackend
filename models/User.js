@@ -15,26 +15,6 @@ const UserSchema = new Schema({
     type: String,
     required: false,
   },
-  maxsalary: {
-    type: String,
-    required: false,
-  },
-  minsalary: {
-    type: String,
-    required: false,
-  },
-  maxexpense: {
-    type: String,
-    required: false,
-  },
-  minexpense: {
-    type: String,
-    required: false,
-  },
-  minexpense: {
-    type: String,
-    required: false,
-  },
   currency: {
     type: String,
     required: false,

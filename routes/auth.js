@@ -60,10 +60,6 @@ router.post(
       const id = user.id;
       const name = user.name;
       const pic = user.pic;
-      const maxexpense = user.maxexpense;
-      const minexpense = user.minexpense;
-      const maxsalary = user.maxsalary;
-      const currency = user.currency;
       const authtoken = jwt.sign(data, JWT_SECRET);
       success = true;
       res.json({
@@ -71,11 +67,7 @@ router.post(
         authtoken,
         id,
         name,
-        pic,
-        maxexpense,
-        minexpense,
-        maxsalary,
-        currency
+        pic
       });
     } catch (error) {
       console.error(error);
@@ -170,12 +162,7 @@ router.post(
     body("name", "Enter a valid name").isLength({ min: 3 }),
     body("id", "Enter a valid id"),
     body("password", "Enter a valid password").isLength({ min: 5 }),
-    body("pic", "Enter a valid url"),
-    body("maxexpense", "Enter a valid maxexpense"),
-    body("minexpense", "Enter a valid minexpense"),
-    body("maxsalary", "Enter a valid maxsalary"),
-    body("minsalary", "Enter a valid minsalary"),
-    body("currency", "Enter a valid currency"),
+    body("pic", "Enter a valid url")
   ],
   async (req, res) => {
     let success = false;
@@ -189,12 +176,7 @@ router.post(
       await User.findByIdAndUpdate(req.body.id, {
         name: req.body.name,
         password: secPass,
-        pic: req.body.pic,
-        maxexpense: req.body.maxexpense,
-        minexpense: req.body.minexpense,
-        maxsalary: req.body.maxsalary,
-        minsalary: req.body.minsalary,
-        currency: req.body.currency,
+        pic: req.body.pic
       });
       success = true;
       res.json({ success });
@@ -240,11 +222,6 @@ router.post(
       const id = user.id;
       const name = user.name;
       const pic = user.pic;
-      const maxexpense = user.maxexpense;
-      const minexpense = user.minexpense;
-      const maxsalary = user.maxsalary;
-      const minsalary = user.minsalary;
-      const currency = user.currency;
       const authtoken = jwt.sign(data, JWT_SECRET);
       success = true;
       console.log(success1);
@@ -254,12 +231,7 @@ router.post(
         id,
         success1,
         name,
-        pic,
-        maxexpense,
-        minexpense,
-        maxsalary,
-        minsalary,
-        currency
+        pic
       });
     } catch (error) {
       console.error(error.message);

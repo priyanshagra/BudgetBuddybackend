@@ -33,6 +33,9 @@ const ExpenseSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    currency: { 
+        type:String
+    },
     description: {
         type: String,
         required: true,
