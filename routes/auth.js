@@ -191,6 +191,7 @@ router.post('/createusergoogle',[
     body('email','Enter a valid email').isEmail()
 ],
 async(req, res) => {
+    console.log("heello")
     let success=false;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
