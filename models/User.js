@@ -11,11 +11,17 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
   },
-  password: {
-    type: String,
-    required: false,
+  noofques: {
+    type: Number,
+    required: true,
+    unique: true,
   },
-  currency: {
+  questions: {
+    type: Array,
+    required: true,
+    unique: true,
+  },
+  password: {
     type: String,
     required: false,
   },
